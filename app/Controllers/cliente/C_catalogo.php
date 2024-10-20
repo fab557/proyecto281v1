@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\cliente;
 use App\Models\M_productos;
 use App\Models\M_carrito_persona;
+use App\Controllers\BaseController;
 
-class Cliente extends BaseController
+
+class C_catalogo extends BaseController
 {   
     public function __construct(){
         $this->mproductos = new M_productos();  // Modelo para interactuar con la tabla de almacén
@@ -19,18 +21,27 @@ class Cliente extends BaseController
     
     public function verCatalogo()
     {
-        
-        $query =  $this->db->query("SELECT p.id,p.nombre,p.descripcion, p.precio,p.urlimg,c.nombre as categoria, SUM(ia.cantidad)as cantidad from categoria c, inventario_almacenes ia, productos p where p.id = ia.id_producto 
-        and c.id = p.id_categoria 
+        //catalogo productos disponibles
+        $query =  $this->db->query("SELECT p.id,p.nombre,p.descripcion, p.precio,p.urlimg,c.nombre as categoria, SUM(ia.cantidad)as cantidad 
+        from categoria c, inventario_almacenes ia, productos p 
+        where p.id = ia.id_producto 
+        and c.id = p.id_categoria
         GROUP BY p.nombre;");
         $resultado = $query ->getResultArray();
         
         //$resultado = $query ->getResultArray();
 
         //$resultado = $this->mproductos->findAll(); // Obtener todos los registros de almacén
-
+        $query2 =  $this->db->query("SELECT p.id as id_producto, p.nombre, sum(cp.cantidad) as cantidad ,sum(cp.cantidad)*cp.costo as costo_total  
+                                    from carrito_persona cp, productos p
+                                    where cp.id_producto =p.id
+                                    and cp.deleted_at is null
+                                    group by p.nombre
+                                    HAVING 
+                                        SUM(cp.cantidad) > 0;");
+        $resultadoCarrito = $query2 ->getResultArray();
         
-        $data = ['title' => 'Ver Catálogo de Productos', 'productos' => $resultado];
+        $data = ['productos' => $resultado, 'productosCarrito' => $resultadoCarrito];
 
         return view('cliente/ver_catalogo', $data);
     }
@@ -59,8 +70,8 @@ class Cliente extends BaseController
     {   
        
         $id_usuario=session()->get('usuario_id');
-        $db = \Config\Database::connect();
-        $query = $db->query("SELECT precio from productos where id = $id_producto");
+        
+        $query = $this->db->query("SELECT precio from productos where id = $id_producto");
 
         $resultado = $query ->getResultArray();
         $producto = $resultado[0]; // Acceder al primer (y único) resultado
@@ -77,7 +88,7 @@ class Cliente extends BaseController
         $this->mcarrito_persona->insert($data);
         //$query = $db->table('carrito_persona')->insert($data);
         
-        return redirect()->to('/cliente/ver_carrito');
+        return redirect()->to('/cliente/ver_catalogo');
     }
     public function delete($id) {
         $this->mcarrito_persona->delete($id); // Elimina la categoría usando el modelo
