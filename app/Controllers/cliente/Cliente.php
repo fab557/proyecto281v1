@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controllers\cliente;
+use App\Controllers\BaseController;
 use App\Models\M_productos;
 use App\Models\M_carrito_persona;
 

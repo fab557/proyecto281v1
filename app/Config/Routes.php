@@ -80,12 +80,12 @@ $routes->get('artesano/registrar_en_almacen', 'artesano\C_registrar_en_almacen::
 
 
 // ---------------------------------Rutas para el cliente-------------------------
-$routes->get('cliente', 'Cliente::index');
-$routes->get('cliente/ver_catalogo', 'Cliente::verCatalogo');
-$routes->get('cliente/ver_carrito', 'Cliente::verCarrito');
-$routes->get('cliente/historial_compras', 'Cliente::historialCompras');
+$routes->get('cliente', 'cliente\Cliente::index');
+$routes->get('cliente/ver_catalogo', 'cliente\Cliente::verCatalogo');
+$routes->get('cliente/ver_carrito', 'cliente\Cliente::verCarrito');
+$routes->get('cliente/historial_compras', 'cliente\Cliente::historialCompras');
 
-$routes->get('cliente/agregar_carrito/(:num)', 'Cliente::agregarCarrito/$1');
+$routes->get('cliente/agregar_carrito/(:num)', 'cliente\Cliente::agregarCarrito/$1');
 
 
 //----------------administrador----------------------

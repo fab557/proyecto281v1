@@ -6,11 +6,19 @@
 
 <div class="container">
     <div class="row">
-        <?php foreach ($productos as $producto): ?>
+        <?php foreach ($productos as $producto): 
+            $urlImg = esc(base_url($producto['urlimg']));
+            ?>
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm border-light">
-                <img src="<?= $producto['urlimg'] ?>" class="card-img-top" alt="<?= $producto['nombre'] ?>">
-                <div class="card-body">
+            <?php 
+                        // Verificar la URL de la imagen
+                        if (!empty($urlImg)): ?>
+                            <img src="<?= $urlImg ?>" alt="<?= esc($producto['nombre']) ?>" class="img-thumbnail" style="width: 100px; height: 100px;">
+                        <?php else: ?>
+                            <span>No disponible</span>
+                        <?php endif; ?>
+                    <div class="card-body">
                     <h5 class="card-title"><?= $producto['nombre'] ?></h5>
                     <p class="card-text"><?= $producto['descripcion'] ?></p>
                     <p class="card-text"><strong>En Stock: </strong><?= $producto['cantidad'] ?></p>
